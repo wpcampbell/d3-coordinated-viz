@@ -43,7 +43,7 @@ function callback(data){
     //translate vegetation topojson to geojson
     var vegetationTopojson = topojson.feature(vegdata_topojson,vegdata_topojson.objects.veg_area_wgs84);
     console.log("This is the converted geojson",vegetationTopojson)
-
+    
 }; //end of function callback
 
 };// end of function setMap
