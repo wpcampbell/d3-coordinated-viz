@@ -19,10 +19,10 @@ function setMap(){
     
     //create Albers equal area conic projection centered on France
     var projection = d3.geoAlbers()
-        .center([44, 89])
+        .center([-83.43,33.12])
         .rotate([-2, 0, 0])
         .parallels([43, 62])
-        .scale(100000)
+        .scale(100)
         .translate([width / 2, height / 2]);
     
     var path = d3.geoPath()
@@ -46,14 +46,15 @@ function callback(data){
     console.log("This is the converted geojson",vegetationTopojson)
     
     // add the geojson to the map
-    var Wisconsin = map.selectAll(".Wisconsin")
+    var regions = map.selectAll(".regions")
         .data(vegetationTopojson)
         .enter()
         .append("path")
         .attr("class", function(d){
             return d.properties.FID2;
          })
-         .attr("d",path);
+         .attr("d","path");
+    console.log("data",data)
 
     }; //end of function callback
 };// end of function setMap
