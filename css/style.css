@@ -1,7 +1,26 @@
 /*Stylesheet by Will P. Campbell,2021*/
 
-.Wisconsin {
-    fill:black;
-    stroke: #ccc;
+.states {
+    fill: #FFF;
+    stroke: #CCC;
     stroke-width: 2px;
 }
+
+.wisconsin {
+    fill:black;
+}
+
+.gratLines {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1px;
+}
+
+.gratBackground {
+    fill: #D5E3FF;
+}
+
+.map {
+    border: medium solid #999;
+}
+
