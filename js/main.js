@@ -75,15 +75,10 @@ var gratLines = map.selectAll(".gratLines") //select graticule elements that wil
         .attr("d", path);
 
     // add the Wisconsin geojson to the map
-    var wisco = map.selectAll(".wisco")
-        .data(vegetationTopojson)
-        .enter()
-        .append("path")
-        .attr("class", function(d){
-            return d.properties.FID2;
-         })
-         .attr("d",path);
-    
+    var wisconsin = map.append("path")
+        .datum(vegdata_topojson)
+        .attr("class","states")
+        .attr("d",path);
 
     }; //end of function callback
 };// end of function setMap

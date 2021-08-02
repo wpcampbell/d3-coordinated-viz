@@ -6,6 +6,11 @@
     stroke-width: 2px;
 }
 
+.wisconsin {
+    fill: none;
+    stroke: black;
+}
+
 .gratLines {
     fill: none;
     stroke: #999;
