@@ -22,7 +22,7 @@ function setMap(){
         .center([-89,43])
         .rotate([-2, 0, 0])
         .parallels([43, 62])
-        .scale(1000)
+        .scale(100)
         .translate([width / 2, height / 2]);
     
     var path = d3.geoPath()
@@ -31,7 +31,7 @@ function setMap(){
 //use Promise.all to parallelize asynchronous data loading
 var promises = [];
 promises.push(d3.csv("data/vegdata.csv"));
-promises.push(d3.json("data/veg_area_wgs84_simple.topojson"))
+promises.push(d3.json("data/veg_area.topojson"))
 promises.push(d3.json("data/states.topojson"))
 Promise.all(promises).then(callback);
 
@@ -63,7 +63,7 @@ var gratLines = map.selectAll(".gratLines") //select graticule elements that wil
     console.log("This is the data array",data)//shows data array on console
 
     //translate vegetation topojson to geojson
-    var vegetationTopojson = topojson.feature(vegdata_topojson,vegdata_topojson.objects.veg_area_wgs84),
+    var vegetationTopojson = topojson.feature(vegdata_topojson,vegdata_topojson.objects.veg_area),
         statesTopojson = topojson.feature(states_topojson,states_topojson.objects.states);
 
     console.log("This is the converted veg geojson",vegetationTopojson)
@@ -75,7 +75,7 @@ var gratLines = map.selectAll(".gratLines") //select graticule elements that wil
         .attr("d", path);
 
     // add the Wisconsin geojson to the map
-    var wisconsin = map.selectAll(".wisconsin")
+    var wisco = map.selectAll(".wisco")
         .data(vegetationTopojson)
         .enter()
         .append("path")
