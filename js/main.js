@@ -1,12 +1,5 @@
 /*Stylesheet by Will P. Campbell,2021*/
 
-//First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
-(function(){
-
-var attrArray = ["FID", "AREA", "PERIMETER", "OVGPW95C_", "OVGPW95C_I",
-                        "VEG_TYPE","LUC_LEVEL2","FID2"]; //list of attributes
-var expressed = attrArray[0]; //initial attribute
-
 //begin script when window loads
 window.onload = setMap();
 
@@ -43,60 +36,36 @@ Promise.all(promises).then(callback);
 
 //callback function    
 function callback(data){
-    
-    [vegdata_csv,vegdata_topojson] = data;
+    //create graticule generator
+    var graticule = d3.geoGraticule()
+        .step([5, 5]); //place graticule lines every 5 degrees of longitude and latitude
 
-    //place graticule on the map
-    setGraticule(map,path);
+//create graticule background
+    var gratBackground = map.append("path")
+        .datum(graticule.outline()) //bind graticule background
+        .attr("class", "gratBackground") //assign class for styling
+        .attr("d", path); //project graticule
 
-     //translate vegetation topojson to geojson
-     var vegetationTopojson = topojson.feature(vegdata_topojson, vegdata_topojson.objects.veg_area);
+//create graticule lines
+    var gratLines = map.selectAll(".gratLines") //select graticule elements that will be created
+        .data(graticule.lines()) //bind graticule lines to each element to be created
+        .enter() //create an element for each datum
+        .append("path") //append each element to the svg as a path element
+        .attr("class", "gratLines") //assign class for styling
+        .attr("d", path); //project graticule lines
+
+
+    vegdata_csv = data[0];
+    vegdata_topojson = data[1];
 
     console.log("This is the data array",data)//shows data array on console
 
     //translate vegetation topojson to geojson
-    var vegetationTopojson = topojson.feature(vegdata_topojson, 
-        vegdata_topojson.objects.veg_area);
+    var vegetationTopojson = topojson.feature(vegdata_topojson, vegdata_topojson.objects.veg_area);
 
-      // add the Wisconsin geojson to the map
-    var wisconsin = map.append("path")
-    .datum(vegetationTopojson)
-    .attr("class", "wisconsin")
-    .attr("d", path);
-
-    vegetationTopojson = joinData(vegetationTopojson,vegdata_csv);
     
-    console.log("This is the converted veg geojson",vegetationTopojson)
-
-  
-    }; //end of function callback
-};// end of function setMap
-
-function setGraticule(map,path){
- //...GRATICULE BLOCKS FROM MODULE 8
-//create graticule generator
-var graticule = d3.geoGraticule()
-    .step([5, 5]); //place graticule lines every 5 degrees of longitude and latitude
-
-//create graticule background
-var gratBackground = map.append("path")
-.datum(graticule.outline()) //bind graticule background
-.attr("class", "gratBackground") //assign class for styling
-.attr("d", path); //project graticule
-
-//create graticule lines
-var gratLines = map.selectAll(".gratLines") //select graticule elements that will be created
-.data(graticule.lines()) //bind graticule lines to each element to be created
-.enter() //create an element for each datum
-.append("path") //append each element to the svg as a path element
-.attr("class", "gratLines") //assign class for styling
-.attr("d", path); //project graticule lines
-};
-
-function joinData(vegetationTopojson,vegdata_csv){
-    //...DATA JOIN LOOPS FROM EXAMPLE 1.1
-     //loop through csv to assign each set of csv attribute values to geojson region
-     for (var i=0; i<vegdata_csv.length; i++){
+    //loop through csv to assign each set of csv attribute values to geojson region
+    for (var i=0; i<vegdata_csv.length; i++){
         var csvRegion = vegdata_csv[i]; // the current region
         var csvKey = csvRegion.FID2; //the geojson primary key
 
@@ -118,6 +87,13 @@ function joinData(vegetationTopojson,vegdata_csv){
         };
     };
 
-    return vegetationTopojson;
-}
-})(); //last line of main.js
+
+    console.log("This is the converted veg geojson",vegetationTopojson)
+
+    // add the Wisconsin geojson to the map
+    var wisconsin = map.append("path")
+        .datum(vegetationTopojson)
+        .attr("class", "wisconsin")
+        .attr("d", path);
+}; //end of function callback
+};// end of function setMap
