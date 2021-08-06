@@ -1,9 +1,9 @@
 /*Stylesheet by Will P. Campbell,2021*/
 
 .wisconsin {
-    fill: #FFF;
-    stroke:black;
-    stroke-width: .25px;
+    stroke: #000;
+    stroke-width: 0.2px;
+    stroke-linecap: round; 
 }
 
 .gratLines {

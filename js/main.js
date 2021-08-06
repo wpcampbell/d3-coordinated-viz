@@ -37,26 +37,27 @@ function setMap(){
     //use Promise.all to parallelize asynchronous data loading
     var promises = [];
     promises.push(d3.csv("data/vegdata.csv")); // loads csv data
+    promises.push(d3.json("data/states.topojson"))
     promises.push(d3.json("data/veg_area.topojson")) // loads map data
     Promise.all(promises).then(callback);
 
     //callback function    
     function callback(data){
 
-        vegdata_csv = data[0];vegdata_topojson = data[1];//define the data
+        vegdata_csv = data[0]; states=data[1]; vegdata_topojson = data[2];//define the data
         
         //place graticule on the map
         setGraticule(map, path);
 
         //translate vegetation topojson to geojson
-        var vegetationTopojson = topojson.feature(vegdata_topojson, 
-            vegdata_topojson.objects.veg_area);
+        //var usaTopojson = topojson.feature(states, states.objects.states),
+            vegetationTopojson = topojson.feature(vegdata_topojson, vegdata_topojson.objects.veg_area).features;
 
-        // add the Wisconsin geojson to the map
-        var wisconsin = map.append("path")
-        .datum(vegetationTopojson)
-        .attr("class", "wisconsin")
-        .attr("d", path);
+        // // add the USA geojson to the map
+        // var stateMap = map.append("path")
+        // .datum(usaTopojson)
+        // .attr("class", "stateMap")
+        // .attr("d", path);
         
         //join csv data to GeoJSON enumeration units
         vegetationTopojson = joinData(vegetationTopojson, vegdata_csv);
