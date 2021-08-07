@@ -13,7 +13,7 @@ window.onload = setMap();
 function setMap(){
 
     //map frame dimensions
-    var width = 960,
+    var width = window.innerWidth * 0.5,
         height = 460;
 
     //create new svg container for the map
@@ -28,7 +28,7 @@ function setMap(){
         .center([0, 44.5])
         .rotate([89, 0, 0])
         .parallels([43, 62])
-        .scale(4500)
+        .scale(5000)
         .translate([width / 2, height / 2]);
 
     var path = d3.geoPath()
@@ -50,7 +50,7 @@ function setMap(){
         setGraticule(map, path);
 
         //translate vegetation topojson to geojson
-        //var usaTopojson = topojson.feature(states, states.objects.states),
+        var usaTopojson = topojson.feature(states, states.objects.states),
             vegetationTopojson = topojson.feature(vegdata_topojson, vegdata_topojson.objects.veg_area).features;
 
         // // add the USA geojson to the map
@@ -69,7 +69,7 @@ function setMap(){
         setEnumerationUnits(vegetationTopojson, map, path, colorScale);
 
         //add coordinated visualization to the map
-        //setChart(vegdata_csv, colorScale);
+        setChart(vegdata_csv, colorScale);
 
     };//end of function callback
 };// end of function setMap
@@ -195,23 +195,23 @@ function setEnumerationUnits(vegetationTopojson, map, path, colorScale){
 }; // end of function setEnumerationUnits
 
 //function to create coordinated bar chart
-// function setChart(csvData, colorScale){
-//     //chart frame dimensions
-//     var chartWidth = window.innerWidth * 0.425,
-//         chartHeight = 473,
-//         leftPadding = 25,
-//         rightPadding = 2,
-//         topBottomPadding = 5,
-//         chartInnerWidth = chartWidth - leftPadding - rightPadding,
-//         chartInnerHeight = chartHeight - topBottomPadding * 2,
-//         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+function setChart(vegdata_csv, colorScale){
+    //chart frame dimensions
+    var chartWidth = window.innerWidth * 0.425,
+        chartHeight = 473
+        // leftPadding = 25,
+        // rightPadding = 2,
+        // topBottomPadding = 5,
+        // chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        // chartInnerHeight = chartHeight - topBottomPadding * 2,
+        // translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
-//     //create a second svg element to hold the bar chart
-//     var chart = d3.select("body")
-//         .append("svg")
-//         .attr("width", chartWidth)
-//         .attr("height", chartHeight)
-//         .attr("class", "chart");
+    //create a second svg element to hold the bar chart
+    var chart = d3.select("body")
+        .append("svg")
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
+        .attr("class", "chart");
 
 //     //create a rectangle for chart background fill
 //     var chartBackground = chart.append("rect")
@@ -227,7 +227,7 @@ function setEnumerationUnits(vegetationTopojson, map, path, colorScale){
 //         .range([chartHeight - 10, 0])
 //         .domain([0, csvmax + 20]);
 
-//     //set bars for each province
+//     //set bars for each shape
 //     var bars = chart.selectAll(".bar")
 //         .data(csvData)
 //         .enter()
@@ -250,7 +250,7 @@ function setEnumerationUnits(vegetationTopojson, map, path, colorScale){
 //         })
 //         .style("fill", function(d){
 //             return choropleth(d, colorScale);
-//         });
+         }; //originally '});'
 //DONT UNCOMMENT THIS
     // //annotate bars with attribute value text
     // var numbers = chart.selectAll(".numbers")
