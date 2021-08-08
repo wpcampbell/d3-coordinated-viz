@@ -13,7 +13,7 @@ window.onload = setMap();
 function setMap(){
 
     //map frame dimensions
-    var width = window.innerWidth * 0.5,
+    var width = window.innerWidth *.5,
         height = 460;
 
     //create new svg container for the map
@@ -26,7 +26,7 @@ function setMap(){
     //create Albers equal area conic projection centered on France
     var projection = d3.geoAlbers()
         .center([0, 44.5])
-        .rotate([89, 0, 0])
+        .rotate([90, 0])
         .parallels([43, 62])
         .scale(5000)
         .translate([width / 2, height / 2]);
@@ -71,6 +71,7 @@ function setMap(){
         //add coordinated visualization to the map
         setChart(vegdata_csv, colorScale);
 
+        createDropdown(vegdata_csv)
     };//end of function callback
 };// end of function setMap
 
@@ -196,7 +197,7 @@ function setEnumerationUnits(vegetationTopojson, map, path, colorScale){
 
 //function to create coordinated bar chart
 function setChart(vegdata_csv, colorScale){
-    var chartWidth = window.innerWidth * 0.425,
+    var chartWidth = window.innerWidth *.425,
         chartHeight = 473,
         leftPadding = 25,
         rightPadding = 2,
@@ -228,7 +229,7 @@ function setChart(vegdata_csv, colorScale){
      .attr("class", function(d){
          return "bars " + d.FID2;
      })
-     .attr("width", chartWidth / vegdata_csv.length -0.25)
+     .attr("width", chartWidth / vegdata_csv.length -1)
      .attr("x", function(d, i){
          return i * (chartWidth / vegdata_csv.length);
      })
@@ -241,9 +242,55 @@ function setChart(vegdata_csv, colorScale){
      .style("fill", function(d){
         return choropleth(d, colorScale);
      });
-    
+     //KEEP FOR LATER?
+    //below Example 2.8...create a text element for the chart title
+    // var chartTitle = chart.append("text")
+    //     .attr("x", 20)
+    //     .attr("y", 40)
+    //     .attr("class", "chartTitle")
+    //     .text("Number of Variable " + expressed + " in each region");
+   
+   //create vertical axis generator
+   var yAxis = d3.axisLeft()
+   .scale(yScale);
+
+//place axis
+var axis = chart.append("g")
+   .attr("class", "axis")
+   .attr("transform", translate)
+   .call(yAxis);
+
+    //create frame for chart border
+    var chartFrame = chart.append("rect")
+        .attr("class", "chartFrame")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
 };
 
+function createDropdown(){
+    //add select element
+    var dropdown = d3.select("body")
+        .append("select")
+        .attr("class", "dropdown")
+        .on("change", function(){
+            changeAttribute(this.value, vegdata_csv)
+        });
+
+    //add initial option
+    var titleOption = dropdown.append("option")
+        .attr("class", "titleOption")
+        .attr("disabled", "true")
+        .text("Select Attribute");
+
+    //add attribute name options
+    var attrOptions = dropdown.selectAll("attrOptions")
+        .data(attrArray)
+        .enter()
+        .append("option")
+        .attr("value", function(d){ return d })
+        .text(function(d){ return d }); 
+};
 
 
 
