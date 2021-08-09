@@ -11,15 +11,15 @@
             chartHeight = 473,
             leftPadding = 25,
             rightPadding = 2,
-            topBottomPadding = 5,
+            topBottomPadding = 2,
             chartInnerWidth = chartWidth - leftPadding - rightPadding,
             chartInnerHeight = chartHeight - topBottomPadding * 2,
             translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
     //create a scale to size bars proportionally to frame
     var yScale = d3.scaleLinear()
-    .range([0, chartHeight])
-    .domain([0, 105]);
+    .range([chartHeight, 0])
+    .domain([0,600]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -28,7 +28,7 @@
     function setMap(){
     
         //map frame dimensions
-        var width = window.innerWidth *.5,
+        var width = window.innerWidth *.425,
             height = 460;
     
         //create new svg container for the map
@@ -220,7 +220,14 @@
             .attr("height", chartHeight)
             .attr("class", "chart");
     
-     //Example 2.4 line 8...set bars for each province
+        //create a rectangle for chart background fill
+        var chartBackground = chart.append("rect")
+        .attr("class", "chartBackground")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+
+     //Example 2.4 line 8...set bars for each shape
      var bars = chart.selectAll(".bars")
          .data(vegdata_csv)
          .enter()
@@ -244,23 +251,24 @@
          .style("fill", function(d){
             return choropleth(d, colorScale);
          });
-         //KEEP FOR LATER?
+         
         //below Example 2.8...create a text element for the chart title
-        // var chartTitle = chart.append("text")
-        //     .attr("x", 20)
-        //     .attr("y", 40)
-        //     .attr("class", "chartTitle")
-        //     .text("Number of Variable " + expressed + " in each region");
+        var chartTitle = chart.append("text")
+            .attr("x", 30)
+            .attr("y", 40)
+            .attr("class", "chartTitle")
+            .text("Number of Variable " + expressed + " in each region of Wisconsin");
        
        //create vertical axis generator
        var yAxis = d3.axisLeft()
        .scale(yScale);
     
-    //place axis
-    var axis = chart.append("g")
+        //place axis
+        var axis = chart.append("g")
        .attr("class", "axis")
        .attr("transform", translate)
        .call(yAxis);
+;
     
         //create frame for chart border
         var chartFrame = chart.append("rect")
@@ -268,7 +276,11 @@
             .attr("width", chartInnerWidth)
             .attr("height", chartInnerHeight)
             .attr("transform", translate);
-    };
+
+        //set bar positions, heights, and colors
+        updateChart(bars, vegdata_csv.length, colorScale);
+        
+    }; //end of function setChart
     
     function createDropdown(){
         //add select element
@@ -298,6 +310,28 @@
         //change the expressed attribute
         expressed = attribute;
     
+
+
+        // change yscale dynamically
+        // csvmax = d3.max(vegdata_csv, function(d) { return parseFloat(d[expressed]); });
+
+        // yScale = d3.scaleLinear()
+        // .range([chartHeight - 10, 0])
+        // .domain([0, csvmax*1.1]);
+
+        // //updata vertical axis 
+        // d3.select(".axis").remove();
+        // var yAxis = d3.axisLeft()
+        //     .scale(yScale);
+
+        // //place axis
+        // var axis = d3.select(".chart")
+        //     .append("g")
+        //     .attr("class", "axis")
+        //     .attr("transform", translate)
+        //     .call(yAxis);
+    
+
         //recreate the color scale
         var colorScale = makeColorScale(vegdata_csv);
     
@@ -308,25 +342,35 @@
             });
         
         //re-sort, resize, and recolor bars
-    var bars = d3.selectAll(".bar")
-    //re-sort bars
-    .sort(function(a, b){
-        return b[expressed] - a[expressed];
-    })
-    .attr("x", function(d, i){
-        return i * (chartInnerWidth / vegdata_csv.length) + leftPadding;
-    })
-    //resize bars
-    .attr("height", function(d, i){
-        return 463 - yScale(parseFloat(d[expressed]));
-    })
-    .attr("y", function(d, i){
-        return yScale(parseFloat(d[expressed])) + topBottomPadding;
-    })
-    //recolor bars
-    .style("fill", function(d){
-        return choropleth(d, colorScale);
-    });
-};
+        var bars = d3.selectAll(".bar")
+        //re-sort bars
+        .sort(function(a, b){
+            return b[expressed] - a[expressed];
+        });
+         updateChart(bars, n, colorScale);
+
+        }; //end of function changeAttribute
+
+        //function to position, size, and color bars in chart
+        function updateChart(bars, n, colorScale){
+        //position bars
+        bars.attr("x", function(d, i){
+            return i * (chartInnerWidth / n) + leftPadding;
+        })
+        //resize bars
+        .attr("height", function(d, i){
+            return 600 - yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        //recolor bars
+        .style("fill", function(d){
+            return choropleth(d, colorScale);
+        });
+        var chartTitle = d3.select(".chartTitle")
+        .text("Number of Variable " + expressed + " in each region of Wisconsin");
+        };    
     
-    })(); //last line of main.js
+    
+})(); //last line of main.js
