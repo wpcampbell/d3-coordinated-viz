@@ -63,7 +63,7 @@ function setMap(){
         vegetationTopojson = joinData(vegetationTopojson, vegdata_csv);
 
         //create the color scale
-        var colorScale = makeColorScaleNatural(vegdata_csv);
+        var colorScale = makeColorScale(vegdata_csv);
 
         //add enumeration units to the map
         setEnumerationUnits(vegetationTopojson, map, path, colorScale);
@@ -128,7 +128,7 @@ function joinData(vegetationTopojson,vegdata_csv){
 }; //end of function joinData
 
 //Example 1.6 Natural Breaks color scale
-function makeColorScaleNatural(data){
+function makeColorScale(data){
     var colorClasses = [
         "#FFFFCC",
         "#C2E669",
@@ -163,7 +163,7 @@ function makeColorScaleNatural(data){
 	//console.log(domainArray);
 
     return colorScale;
-};//end of function makeColorScaleNatural
+};//end of function makeColorScale
 
 
 //function to test for data value and return color
@@ -290,6 +290,20 @@ function createDropdown(){
         .append("option")
         .attr("value", function(d){ return d })
         .text(function(d){ return d }); 
+};
+//dropdown change listener handler
+function changeAttribute(attribute, vegdata_csv){
+    //change the expressed attribute
+    expressed = attribute;
+
+    //recreate the color scale
+    var colorScale = makeColorScale(vegdata_csv);
+
+    //recolor enumeration units
+    var wisconsin = d3.selectAll(".wisconsin")
+        .style("fill", function(d){
+            return choropleth(d.properties, colorScale)
+        });
 };
 
 
