@@ -7,7 +7,7 @@
     var expressed = attrArray[0]; //initial attribute
     
     //chart frame dimensions
-    var chartWidth = window.innerWidth *.425,
+    var chartWidth = window.innerWidth *0.425,
             chartHeight = 473,
             leftPadding = 25,
             rightPadding = 2,
@@ -18,8 +18,8 @@
 
     //create a scale to size bars proportionally to frame
     var yScale = d3.scaleLinear()
-    .range([chartHeight, 0])
-    .domain([0,600]);
+    .range([chartHeight ,0])
+    .domain([0, 10000]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -28,7 +28,7 @@
     function setMap(){
     
         //map frame dimensions
-        var width = window.innerWidth *.425,
+        var width = window.innerWidth *0.5,
             height = 460;
     
         //create new svg container for the map
@@ -233,7 +233,7 @@
          .enter()
          .append("rect")
          .sort(function(a, b){
-                return a[expressed]-b[expressed]
+                return b[expressed]-a[expressed]
             })
          .attr("class", function(d){
              return "bars " + d.FID2;
@@ -254,8 +254,8 @@
          
         //below Example 2.8...create a text element for the chart title
         var chartTitle = chart.append("text")
-            .attr("x", 30)
-            .attr("y", 40)
+            .attr("x", 55)
+            .attr("y", 30)
             .attr("class", "chartTitle")
             .text("Number of Variable " + expressed + " in each region of Wisconsin");
        
@@ -282,7 +282,7 @@
         
     }; //end of function setChart
     
-    function createDropdown(){
+    function createDropdown(vegdata_csv){
         //add select element
         var dropdown = d3.select("body")
             .append("select")
@@ -309,8 +309,6 @@
     function changeAttribute(attribute, vegdata_csv){
         //change the expressed attribute
         expressed = attribute;
-    
-
 
         // change yscale dynamically
         // csvmax = d3.max(vegdata_csv, function(d) { return parseFloat(d[expressed]); });
@@ -337,17 +335,23 @@
     
         //recolor enumeration units
         var wisconsin = d3.selectAll(".wisconsin")
+            .transition()
+            .duration(1000)
             .style("fill", function(d){
                 return choropleth(d.properties, colorScale)
             });
         
         //re-sort, resize, and recolor bars
-        var bars = d3.selectAll(".bar")
+        var bars = d3.selectAll(".bars")
         //re-sort bars
         .sort(function(a, b){
             return b[expressed] - a[expressed];
-        });
-         updateChart(bars, n, colorScale);
+        })
+        .transition()
+        .delay (function(d,i){
+            return i*20
+        })
+         updateChart(bars, vegdata_csv.length, colorScale);
 
         }; //end of function changeAttribute
 
@@ -369,7 +373,7 @@
             return choropleth(d, colorScale);
         });
         var chartTitle = d3.select(".chartTitle")
-        .text("Number of Variable " + expressed + " in each region of Wisconsin");
+        .text("The " + expressed + " in each region of Wisconsin");
         };    
     
     
