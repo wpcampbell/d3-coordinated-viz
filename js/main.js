@@ -203,7 +203,10 @@
             })
             .attr("d",path)
             .style("fill",  function(d){
-                return choropleth(d.properties,colorScale)
+                return choropleth(d.properties,colorScale);
+            })
+            .on("mouseover",function(d){
+                highlight(d.properties);
             });
     }; // end of function setEnumerationUnits
     
@@ -236,18 +239,7 @@
              return "bars " + d.FID2;
          })
          .attr("width", chartWidth / vegdata_csv.length -1)
-         .attr("x", function(d, i){
-             return i * (chartWidth / vegdata_csv.length);
-         })
-         .attr("height", function(d){
-             return yScale(parseFloat(d[expressed]));
-         })
-         .attr("y", function(d){
-             return chartHeight - yScale(parseFloat(d[expressed]));
-         })
-         .style("fill", function(d){
-            return choropleth(d, colorScale);
-         });
+         .on("mouseover",highlight);
          
         //below Example 2.8...create a text element for the chart title
         var chartTitle = chart.append("text")
@@ -373,5 +365,13 @@
         .text("The " + expressed + " in each region of Wisconsin");
         };    
     
+    //function to highlight enumeration units and bars
+function highlight(props){
+    //change stroke
+    var selected = d3.selectAll("." + props.FID2)
+        .style("stroke", "blue")
+        .style("stroke-width", "2");
+
+};
     
 })(); //last line of main.js
