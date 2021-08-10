@@ -156,15 +156,14 @@
         var colorScale = d3.scaleQuantile()
             .range(colorClasses);
     
-        //build array of all values of the expressed attribute
-        var domainArray = [];
-        for (var i=0; i<data.length; i++){
-            var val = parseFloat(data[i][expressed]);
-            domainArray.push(val);
-        };
-     //assign array of expressed values as scale domain
-     colorScale.domain(domainArray);
-     
+      //build two-value array of minimum and maximum expressed attribute values
+    var minmax = [
+        d3.min(data, function(d) { return parseFloat(d[expressed]); }),
+        d3.max(data, function(d) { return parseFloat(d[expressed]); })
+    ];
+    //assign two-value array as scale domain
+    colorScale.domain(minmax);  
+
         return colorScale;
     };//end of function makeColorScale
     
