@@ -3,7 +3,7 @@
 (function(){
 
     var attrArray = ["FID", "AREA", "PERIMETER", "OVGPW95C_", "OVGPW95C_I",
-                    "VEG_TYPE","LUC_LEVEL2","FID2"]; //list of attributes
+                    "VEG_TYPE","LUC_LEVEL2"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
     
     //chart frame dimensions
@@ -76,7 +76,7 @@
             
             //join csv data to GeoJSON enumeration units
             vegetationTopojson = joinData(vegetationTopojson, vegdata_csv);
-    
+            console.log(vegetationTopojson)
             //create the color scale
             var colorScale = makeColorScale(vegdata_csv);
     
@@ -371,7 +371,6 @@ function highlight(props){
     var selected = d3.selectAll("." + props.FID2)
         .style("stroke", "blue")
         .style("stroke-width", "2");
-
 };
     
 })(); //last line of main.js
