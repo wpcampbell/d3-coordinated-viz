@@ -19,7 +19,7 @@
     //create a scale to size bars proportionally to frame
     var yScale = d3.scaleLinear()
     .range([chartHeight ,0])
-    .domain([0, 10000]);
+    .domain([0, 600]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -153,7 +153,7 @@
         ];
     
         //create color scale generator
-        var colorScale = d3.scaleThreshold()
+        var colorScale = d3.scaleQuantile()
             .range(colorClasses);
     
         //build array of all values of the expressed attribute
@@ -162,21 +162,9 @@
             var val = parseFloat(data[i][expressed]);
             domainArray.push(val);
         };
-    
-        //cluster data using ckmeans clustering algorithm to create natural breaks
-        var clusters = ss.ckmeans(domainArray, 5);
-        //reset domain array to cluster minimums
-        domainArray = clusters.map(function(d){
-            return d3.min(d);
-        });
-        //remove first value from domain array to create class breakpoints
-        //console.log(domainArray);
-        domainArray.shift();
-    
-        //assign array of last 4 cluster minimums as domain
-        colorScale.domain(domainArray);
-        //console.log(domainArray);
-    
+     //assign array of expressed values as scale domain
+     colorScale.domain(domainArray);
+     
         return colorScale;
     };//end of function makeColorScale
     
