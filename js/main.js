@@ -2,8 +2,8 @@
 //First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
 (function(){
 
-    var attrArray = ["FID", "AREA", "PERIMETER", "OVGPW95C_", "OVGPW95C_I",
-                    "VEG_TYPE","LUC_LEVEL2"]; //list of attributes
+    var attrArray = ["fid", "area", "perimeter", "ovgpw95c_", "ovgpw95c_i",
+                    "veg_type","luc_level2"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
     
     //chart frame dimensions
@@ -117,13 +117,13 @@
         //loop through csv to assign each set of csv attribute values to geojson region
         for (var i=0; i<vegdata_csv.length; i++){
             var csvRegion = vegdata_csv[i]; // the current region
-            var csvKey = csvRegion.FID2; //the geojson primary key
+            var csvKey = csvRegion.fid2; //the geojson primary key
     
             //loop through geojson regions to find correct region
             for (var a=0; a<vegetationTopojson.length; a++){
     
                 var geojsonProps = vegetationTopojson[a].properties; //the current vegetation geojson properties
-                var geojsonKey = geojsonProps.FID2; //the geojson primary key
+                var geojsonKey = geojsonProps.fid2; //the geojson primary key
     
                 //where primary keys match, transfer csv data to geojson properties object
                 if (geojsonKey == csvKey){
@@ -199,7 +199,7 @@
             .enter()
             .append("path")
             .attr("class",  function(d){
-                return "wisconsin " + d.properties.FID2;
+                return "wisconsin " + d.properties.fid2;
             })
             .attr("d",path)
             .style("fill",  function(d){
@@ -244,7 +244,7 @@
                 return b[expressed]-a[expressed]
             })
          .attr("class", function(d){
-             return "bars " + d.FID2;
+             return "bars " + d.fid2;
          })
          .attr("width", chartWidth / vegdata_csv.length -1)
          .on("mouseover",highlight)
@@ -380,16 +380,19 @@
         };    
     
     //function to highlight enumeration units and bars
-function highlight(props){
+    function highlight(props){
+
     //change stroke
-    var selected = d3.selectAll("." + props.FID2)
+    var selected = d3.selectAll("." + props.fid2)
         .style("stroke", "blue")
         .style("stroke-width", "2");
+
+    setLabel(props);
 };
 
 //function to reset the element style on mouseout
 function dehighlight(props){
-    var selected = d3.selectAll("." + props.FID2)
+    var selected = d3.selectAll("." + props.fid2)
         .style("stroke", function(){
             return getStyle(this, "stroke")
         })
@@ -420,7 +423,7 @@ function setLabel(props){
     var infolabel = d3.select("body")
         .append("div")
         .attr("class", "infolabel")
-        .attr("id", props.adm1_code + "_label")
+        .attr("id", props.fid2 + "_label")
         .html(labelAttribute);
 
     var regionName = infolabel.append("div")
