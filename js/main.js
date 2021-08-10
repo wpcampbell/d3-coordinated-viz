@@ -207,7 +207,15 @@
             })
             .on("mouseover",function(d){
                 highlight(d.properties);
-            });
+            })
+            .on("mouseout", function(d){
+                dehighlight(d.properties);
+            })
+            .on("mousemove", moveLabel);
+            //add style descriptor 
+            var desc = wisconsin.append("desc")
+            .text('{"stroke: "#000","stroke-width: "0.5px"}');
+            
     }; // end of function setEnumerationUnits
     
     //function to create coordinated bar chart
@@ -239,8 +247,14 @@
              return "bars " + d.FID2;
          })
          .attr("width", chartWidth / vegdata_csv.length -1)
-         .on("mouseover",highlight);
+         .on("mouseover",highlight)
+         .on("mouseout", dehighlight)
+         .on("mousemove", moveLabel);
+
          
+         //add style descriptor
+         var desc = bars.append("desc")
+         .text('{"stroke":"none","stroke width: "0px"}')
         //below Example 2.8...create a text element for the chart title
         var chartTitle = chart.append("text")
             .attr("x", 55)
@@ -372,5 +386,69 @@ function highlight(props){
         .style("stroke", "blue")
         .style("stroke-width", "2");
 };
-    
+
+//function to reset the element style on mouseout
+function dehighlight(props){
+    var selected = d3.selectAll("." + props.FID2)
+        .style("stroke", function(){
+            return getStyle(this, "stroke")
+        })
+        .style("stroke-width", function(){
+            return getStyle(this, "stroke-width")
+        });
+
+    d3.select(".infolabel")
+        .remove();
+
+    function getStyle(element, styleName){
+        var styleText = d3.select(element)
+            .select("desc")
+            .text();
+
+        var styleObject = JSON.parse(styleText);
+
+        return styleObject[styleName];
+    };
+};
+
+function setLabel(props){
+    //label content
+    var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr("class", "infolabel")
+        .attr("id", props.adm1_code + "_label")
+        .html(labelAttribute);
+
+    var regionName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
+};
+
+//function to move info label with mouse
+function moveLabel(){
+    //get width of label
+    var labelWidth = d3.select(".infolabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
+    //use coordinates of mousemove event to set label coordinates
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75;
+        x2 = d3.event.clientX - labelWidth - 10,
+        y2 = d3.event.clientY + 25;
+
+     //horizontal label coordinate, testing for overflow
+     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1; 
+     //vertical label coordinate, testing for overflow
+     var y = d3.event.clientY < 75 ? y2 : y1; 
+
+    d3.select(".infolabel")
+        .style("left", x + "px")
+        .style("top", y + "px");
+};
+
 })(); //last line of main.js
