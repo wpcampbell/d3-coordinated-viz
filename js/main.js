@@ -206,10 +206,10 @@
                 return choropleth(d.properties,colorScale);
             })
             .on("mouseover",function(d){
-                highlight(d.properties);
+                highlight(this);
             })
             .on("mouseout", function(d){
-                dehighlight(d.properties);
+                dehighlight(this);
             })
             .on("mousemove", moveLabel);
             //add style descriptor 
@@ -247,8 +247,13 @@
              return "bars " + d.fid2;
          })
          .attr("width", chartWidth / vegdata_csv.length -1)
-         .on("mouseover",highlight)
-         .on("mouseout", dehighlight)
+         .on("mouseover", function (d){
+             highlight(this);
+         })
+         .on("mouseout", function (d){
+             dehighlight(this)
+         })
+         
          .on("mousemove", moveLabel);
 
          
