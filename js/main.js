@@ -76,7 +76,6 @@
             
             //join csv data to GeoJSON enumeration units
             vegetationTopojson = joinData(vegetationTopojson, vegdata_csv);
-            console.log(vegetationTopojson)
             //create the color scale
             var colorScale = makeColorScale(vegdata_csv);
     
@@ -136,8 +135,6 @@
                 };
             };
         };
-    
-        console.log("This is the converted veg geojson",vegetationTopojson);
     
         return vegetationTopojson;
     }; //end of function joinData
@@ -205,17 +202,11 @@
             .style("fill",  function(d){
                 return choropleth(d.properties,colorScale);
             })
-            .on("mouseover",function(d){
-                highlight(this);
-            })
-            .on("mouseout", function(d){
-                dehighlight(this);
-            })
-            .on("mousemove", moveLabel);
-            //add style descriptor 
-            var desc = wisconsin.append("desc")
-            .text('{"stroke: "#000","stroke-width: "0.5px"}');
             
+
+            //add style descriptor 
+           
+ 
     }; // end of function setEnumerationUnits
     
     //function to create coordinated bar chart
@@ -247,25 +238,14 @@
              return "bars " + d.fid2;
          })
          .attr("width", chartWidth / vegdata_csv.length -1)
-         .on("mouseover", function (d){
-             highlight(this);
-         })
-         .on("mouseout", function (d){
-             dehighlight(this)
-         })
          
-         .on("mousemove", moveLabel);
-
-         
-         //add style descriptor
-         var desc = bars.append("desc")
-         .text('{"stroke":"none","stroke width: "0px"}')
         //below Example 2.8...create a text element for the chart title
         var chartTitle = chart.append("text")
             .attr("x", 55)
             .attr("y", 30)
             .attr("class", "chartTitle")
-            .text("Number of Variable " + expressed + " in each region of Wisconsin");
+            .text("The " + expressed + " in each region of Wisconsin");
+            
        
        //create vertical axis generator
        var yAxis = d3.axisLeft()
@@ -311,32 +291,12 @@
             .enter()
             .append("option")
             .attr("value", function(d){ return d })
-            .text(function(d){ return d }); 
+            .text(function(d){ return d });
     };
     //dropdown change listener handler
     function changeAttribute(attribute, vegdata_csv){
         //change the expressed attribute
         expressed = attribute;
-
-        // change yscale dynamically
-        // csvmax = d3.max(vegdata_csv, function(d) { return parseFloat(d[expressed]); });
-
-        // yScale = d3.scaleLinear()
-        // .range([chartHeight - 10, 0])
-        // .domain([0, csvmax*1.1]);
-
-        // //updata vertical axis 
-        // d3.select(".axis").remove();
-        // var yAxis = d3.axisLeft()
-        //     .scale(yScale);
-
-        // //place axis
-        // var axis = d3.select(".chart")
-        //     .append("g")
-        //     .attr("class", "axis")
-        //     .attr("transform", translate)
-        //     .call(yAxis);
-    
 
         //recreate the color scale
         var colorScale = makeColorScale(vegdata_csv);
@@ -380,83 +340,7 @@
         .style("fill", function(d){
             return choropleth(d, colorScale);
         });
-        var chartTitle = d3.select(".chartTitle")
-        .text("The " + expressed + " in each region of Wisconsin");
+        
         };    
-    
-    //function to highlight enumeration units and bars
-    function highlight(props){
-
-    //change stroke
-    var selected = d3.selectAll("." + props.fid2)
-        .style("stroke", "blue")
-        .style("stroke-width", "2");
-
-    setLabel(props);
-};
-
-//function to reset the element style on mouseout
-function dehighlight(props){
-    var selected = d3.selectAll("." + props.fid2)
-        .style("stroke", function(){
-            return getStyle(this, "stroke")
-        })
-        .style("stroke-width", function(){
-            return getStyle(this, "stroke-width")
-        });
-
-    d3.select(".infolabel")
-        .remove();
-
-    function getStyle(element, styleName){
-        var styleText = d3.select(element)
-            .select("desc")
-            .text();
-
-        var styleObject = JSON.parse(styleText);
-
-        return styleObject[styleName];
-    };
-};
-
-function setLabel(props){
-    //label content
-    var labelAttribute = "<h1>" + props[expressed] +
-        "</h1><b>" + expressed + "</b>";
-
-    //create info label div
-    var infolabel = d3.select("body")
-        .append("div")
-        .attr("class", "infolabel")
-        .attr("id", props.fid2 + "_label")
-        .html(labelAttribute);
-
-    var regionName = infolabel.append("div")
-        .attr("class", "labelname")
-        .html(props.name);
-};
-
-//function to move info label with mouse
-function moveLabel(){
-    //get width of label
-    var labelWidth = d3.select(".infolabel")
-        .node()
-        .getBoundingClientRect()
-        .width;
-    //use coordinates of mousemove event to set label coordinates
-    var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY - 75;
-        x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
-
-     //horizontal label coordinate, testing for overflow
-     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1; 
-     //vertical label coordinate, testing for overflow
-     var y = d3.event.clientY < 75 ? y2 : y1; 
-
-    d3.select(".infolabel")
-        .style("left", x + "px")
-        .style("top", y + "px");
-};
 
 })(); //last line of main.js
