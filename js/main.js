@@ -136,6 +136,8 @@
             };
         };
     
+        console.log("This is the converted veg geojson",vegetationTopojson);
+    
         return vegetationTopojson;
     }; //end of function joinData
     
@@ -202,7 +204,9 @@
             .style("fill",  function(d){
                 return choropleth(d.properties,colorScale);
             })
-            
+            .on("mouseover", function(d){
+                highlight(d.properties);
+            });            
 
             //add style descriptor 
            
@@ -244,8 +248,7 @@
             .attr("x", 55)
             .attr("y", 30)
             .attr("class", "chartTitle")
-            .text("The " + expressed + " in each region of Wisconsin");
-            
+            .text("Number of Variable " + expressed + " in each region of Wisconsin");
        
        //create vertical axis generator
        var yAxis = d3.axisLeft()
@@ -291,12 +294,32 @@
             .enter()
             .append("option")
             .attr("value", function(d){ return d })
-            .text(function(d){ return d });
+            .text(function(d){ return d })
     };
     //dropdown change listener handler
     function changeAttribute(attribute, vegdata_csv){
         //change the expressed attribute
         expressed = attribute;
+
+        // change yscale dynamically
+        // csvmax = d3.max(vegdata_csv, function(d) { return parseFloat(d[expressed]); });
+
+        // yScale = d3.scaleLinear()
+        // .range([chartHeight - 10, 0])
+        // .domain([0, csvmax*1.1]);
+
+        // //updata vertical axis 
+        // d3.select(".axis").remove();
+        // var yAxis = d3.axisLeft()
+        //     .scale(yScale);
+
+        // //place axis
+        // var axis = d3.select(".chart")
+        //     .append("g")
+        //     .attr("class", "axis")
+        //     .attr("transform", translate)
+        //     .call(yAxis);
+    
 
         //recreate the color scale
         var colorScale = makeColorScale(vegdata_csv);
@@ -340,7 +363,16 @@
         .style("fill", function(d){
             return choropleth(d, colorScale);
         });
-        
+        var chartTitle = d3.select(".chartTitle")
+        .text("The " + expressed + " in each region of Wisconsin");
         };    
+        //function to highlight enumeration units and bars
+        function highlight(props){
+            //change stroke
+            var selected = d3.selectAll("." + props.fid2)
+                .style("stroke", "blue")
+                .style("stroke-width", "2");
+        };
+
 
 })(); //last line of main.js
